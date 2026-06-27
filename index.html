@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Meeting Prep — Live Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,72,400;0,72,500;0,72,600;1,72,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  :root {
+    --ink: #1A1A1A;
+    --paper: #FAFAF8;
+    --cell: #FFFFFF;
+    --grid: #D4D0C4;
+    --grid-strong: #B5AE9C;
+    --green: #2D5A4A;
+    --green-bg: #E8EFE9;
+    --rust: #8C3B3B;
+    --rust-bg: #F5E9E7;
+    --amber: #9C7A2E;
+    --amber-bg: #FBF4E6;
+    --muted: #756F62;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 64px;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 1080px;
+  }
+
+  header {
+    margin-bottom: 24px;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--amber);
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  h1 {
+    font-family: 'Newsreader', serif;
+    font-weight: 500;
+    font-size: clamp(26px, 4.5vw, 36px);
+    margin: 0 0 6px 0;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+
+  .sub {
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 600px;
+    line-height: 1.55;
+  }
+
+  /* ---------- Layout: two columns ---------- */
+
+  .layout {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  @media (max-width: 860px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------- Left: input panel ---------- */
+
+  .panel {
+    background: var(--cell);
+    border: 1px solid var(--grid-strong);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .panel-title {
+    background: #F0EEE6;
+    border-bottom: 1px solid var(--grid-strong);
+    padding: 9px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .field-group {
+    padding: 14px;
+    border-bottom: 1px solid var(--grid);
+  }
+  .field-group:last-child { border-bottom: none; }
+
+  .field-group .group-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--amber);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .field:last-child { margin-bottom: 0; }
+
+  .field label {
+    font-size: 12px;
+    color: var(--ink);
+    flex: 1;
+  }
+
+  .field input[type="text"],
+  .field input[type="number"] {
+    border: 1px solid var(--grid);
+    background: var(--paper);
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 6px 8px;
+    width: 130px;
+    text-align: right;
+    color: var(--ink);
+    outline: none;
+  }
+  .field input[type="text"] {
+    text-align: left;
+    width: 150px;
+  }
+  .field input:focus {
+    border-color: var(--amber);
+    background: #FFFCEF;
+  }
+
+  .field textarea {
+    border: 1px solid var(--grid);
+    background: var(--paper);
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 6px 8px;
+    width: 100%;
+    resize: vertical;
+    min-height: 40px;
+    color: var(--ink);
+    outline: none;
+  }
+  .field textarea:focus {
+    border-color: var(--amber);
+    background: #FFFCEF;
+  }
+  .field.stacked {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .field.stacked label {
+    margin-bottom: 4px;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .alloc-row {
+    display: grid;
+    grid-template-columns: 1fr 90px;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .alloc-row input[type="text"] { width: 100%; }
+  .alloc-row input[type="number"] { width: 100%; }
+
+  /* ---------- Right: live output ---------- */
+
+  .output {
+    background: var(--cell);
+    border: 1px solid var(--grid-strong);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .output-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 22px 24px 18px;
+  }
+
+  .output-header .title {
+    font-family: 'Newsreader', serif;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .output-header .meta {
+    font-size: 11px;
+    color: #C9C5BA;
+  }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border-bottom: 1px solid var(--grid);
+  }
+
+  .metric {
+    padding: 16px 18px;
+    border-right: 1px solid var(--grid);
+  }
+  .metric:last-child { border-right: none; }
+
+  .metric .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .metric .value {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .metric .value.pos { color: var(--green); }
+  .metric .value.neg { color: var(--rust); }
+  .metric .sub-note {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  @media (max-width: 560px) {
+    .metrics { grid-template-columns: 1fr; }
+    .metric { border-right: none; border-bottom: 1px solid var(--grid); }
+  }
+
+  /* ---------- Talking point: signature element ---------- */
+
+  .talking-points {
+    background: var(--amber-bg);
+    border-bottom: 1px solid var(--grid);
+    padding: 16px 18px;
+  }
+
+  .talking-points .tp-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--amber);
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .talking-points .tp-label::before {
+    content: '✎';
+    font-size: 12px;
+  }
+
+  .tp-line {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .tp-line:last-child { margin-bottom: 0; }
+
+  .tp-line .typed-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    background: var(--amber);
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .typed-cursor { animation: none; opacity: 1; }
+  }
+
+  /* ---------- Allocation table ---------- */
+
+  .alloc-section {
+    padding: 16px 18px;
+  }
+
+  .alloc-section .sec-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .alloc-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .alloc-table tr {
+    border-bottom: 1px solid var(--grid);
+  }
+  .alloc-table tr:last-child { border-bottom: none; }
+
+  .alloc-table td {
+    padding: 7px 4px;
+    font-size: 12px;
+  }
+
+  .alloc-table .bar-cell {
+    width: 50%;
+  }
+
+  .bar-track {
+    background: #EFEDE5;
+    border-radius: 2px;
+    height: 8px;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+
+  .alloc-table .num {
+    text-align: right;
+    font-weight: 600;
+  }
+
+  .alloc-table .pct {
+    text-align: right;
+    color: var(--muted);
+    width: 50px;
+  }
+
+  /* ---------- CTA ---------- */
+
+  .cta {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid var(--grid);
+    text-align: center;
+  }
+
+  .cta p {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 14px 0;
+    line-height: 1.6;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 12px 22px;
+    border-radius: 3px;
+  }
+  .cta-btn:hover { background: #333; }
+
+  button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 1px;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Live demo · the summary rewrites itself as you type</div>
+    <h1>Walk into every client meeting with the page already written.</h1>
+    <p class="sub">Type a client's numbers in on the left. Watch the one-pager — including the talking points — build itself on the right. This is the same engine behind the Excel version, running in your browser.</p>
+  </header>
+
+  <div class="layout">
+
+    <!-- LEFT: Inputs -->
+    <div class="panel">
+      <div class="panel-title">Inputs</div>
+
+      <div class="field-group">
+        <div class="group-label">Client</div>
+        <div class="field">
+          <label for="clientName">Client name</label>
+          <input type="text" id="clientName" value="Tan Wei Ling">
+        </div>
+        <div class="field">
+          <label for="benchmarkName">Benchmark</label>
+          <input type="text" id="benchmarkName" value="S&P 500">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="group-label">Portfolio snapshot</div>
+        <div class="field">
+          <label for="startValue">Start of year (SGD)</label>
+          <input type="number" id="startValue" value="482000" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="todayValue">Value today (SGD)</label>
+          <input type="number" id="todayValue" value="521400" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="contributions">Net contributions (SGD)</label>
+          <input type="number" id="contributions" value="18000" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="fees">Fees paid YTD (SGD)</label>
+          <input type="number" id="fees" value="3850" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="benchmarkReturn">Benchmark return YTD (%)</label>
+          <input type="number" id="benchmarkReturn" value="8.4" step="0.1" inputmode="decimal">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="group-label">Asset allocation</div>
+        <div id="allocRows"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Generated output -->
+    <div class="output">
+      <div class="output-header">
+        <div class="title" id="outTitle">TAN WEI LING'S PORTFOLIO REVIEW</div>
+        <div class="meta" id="outMeta">Prepared for Tan Wei Ling · Advisor view</div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="label">Portfolio value</div>
+          <div class="value" id="mValue">521,400</div>
+          <div class="sub-note" id="mValueSub">Start of year: 482,000</div>
+        </div>
+        <div class="metric">
+          <div class="label">Return YTD</div>
+          <div class="value" id="mReturn">+4.4%</div>
+          <div class="sub-note" id="mReturnSub">vs. benchmark −4.0%</div>
+        </div>
+        <div class="metric">
+          <div class="label">Fees paid YTD</div>
+          <div class="value" id="mFees">3,850</div>
+          <div class="sub-note" id="mFeesSub">Effective rate: 0.74%</div>
+        </div>
+      </div>
+
+      <div class="talking-points">
+        <div class="tp-label">Auto-generated talking points</div>
+        <div class="tp-line" id="tp1">Portfolio is up 4.4% YTD, trailing the S&P 500 by 4.0%.</div>
+        <div class="tp-line" id="tp2">Total fees YTD are 0.74% of portfolio value, in line with the agreed fee schedule.<span class="typed-cursor"></span></div>
+      </div>
+
+      <div class="alloc-section">
+        <div class="sec-title">Asset allocation</div>
+        <table class="alloc-table" id="allocTable"></table>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="cta">
+    <p>This demo covers the core engine. The version I build for you comes as an editable Excel file with an Inputs tab and a print-ready Client Summary tab — no browser required, fully yours to keep.</p>
+    <a class="cta-btn" href="#contact">Get a custom version →</a>
+  </div>
+
+</div>
+
+<script>
+(function() {
+
+  const barColors = ['#2D5A4A', '#8C3B3B', '#9C7A2E', '#756F62', '#1A1A1A'];
+
+  let allocations = [
+    { name: 'Equities', value: 312840 },
+    { name: 'Bonds', value: 130350 },
+    { name: 'Cash', value: 52140 },
+    { name: 'Alternatives', value: 26070 },
+  ];
+
+  const els = {
+    clientName: document.getElementById('clientName'),
+    benchmarkName: document.getElementById('benchmarkName'),
+    startValue: document.getElementById('startValue'),
+    todayValue: document.getElementById('todayValue'),
+    contributions: document.getElementById('contributions'),
+    fees: document.getElementById('fees'),
+    benchmarkReturn: document.getElementById('benchmarkReturn'),
+    allocRows: document.getElementById('allocRows'),
+    outTitle: document.getElementById('outTitle'),
+    outMeta: document.getElementById('outMeta'),
+    mValue: document.getElementById('mValue'),
+    mValueSub: document.getElementById('mValueSub'),
+    mReturn: document.getElementById('mReturn'),
+    mReturnSub: document.getElementById('mReturnSub'),
+    mFees: document.getElementById('mFees'),
+    mFeesSub: document.getElementById('mFeesSub'),
+    tp1: document.getElementById('tp1'),
+    tp2: document.getElementById('tp2'),
+    allocTable: document.getElementById('allocTable'),
+  };
+
+  function fmt(n) {
+    const v = isFinite(n) ? n : 0;
+    return Math.round(v).toLocaleString('en-SG');
+  }
+
+  function pct(n, decimals = 1) {
+    if (!isFinite(n)) return '0.0%';
+    const sign = n > 0 ? '+' : (n < 0 ? '\u2212' : '');
+    return sign + Math.abs(n).toFixed(decimals) + '%';
+  }
+
+  function renderAllocInputs() {
+    els.allocRows.innerHTML = '';
+    allocations.forEach((a, i) => {
+      const row = document.createElement('div');
+      row.className = 'alloc-row';
+      row.innerHTML = `
+        <input type="text" data-idx="${i}" data-field="name" value="${escapeAttr(a.name)}" aria-label="Asset class name">
+        <input type="number" data-idx="${i}" data-field="value" value="${a.value}" aria-label="Asset class value" inputmode="decimal">
+      `;
+      els.allocRows.appendChild(row);
+    });
+    els.allocRows.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', e => {
+        const idx = parseInt(e.target.dataset.idx, 10);
+        const field = e.target.dataset.field;
+        allocations[idx][field] = field === 'value' ? (parseFloat(e.target.value) || 0) : e.target.value;
+        update();
+      });
+    });
+  }
+
+  function escapeAttr(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  }
+
+  function renderAllocTable() {
+    const total = allocations.reduce((s, a) => s + (parseFloat(a.value) || 0), 0);
+    els.allocTable.innerHTML = '';
+    allocations.forEach((a, i) => {
+      const v = parseFloat(a.value) || 0;
+      const p = total > 0 ? (v / total) * 100 : 0;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(a.name)}</td>
+        <td class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${p}%; background:${barColors[i % barColors.length]}"></div></div></td>
+        <td class="num">${fmt(v)}</td>
+        <td class="pct">${p.toFixed(1)}%</td>
+      `;
+      els.allocTable.appendChild(tr);
+    });
+    const totalRow = document.createElement('tr');
+    totalRow.innerHTML = `
+      <td style="font-weight:700">Total</td>
+      <td></td>
+      <td class="num" style="font-weight:700">${fmt(total)}</td>
+      <td class="pct" style="font-weight:700">${total > 0 ? '100.0%' : '0.0%'}</td>
+    `;
+    els.allocTable.appendChild(totalRow);
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function update() {
+    const clientName = els.clientName.value.trim() || 'Client';
+    const benchmarkName = els.benchmarkName.value.trim() || 'benchmark';
+    const startValue = parseFloat(els.startValue.value) || 0;
+    const todayValue = parseFloat(els.todayValue.value) || 0;
+    const contributions = parseFloat(els.contributions.value) || 0;
+    const fees = parseFloat(els.fees.value) || 0;
+    const benchmarkReturn = parseFloat(els.benchmarkReturn.value) || 0;
+
+    const returnPct = startValue > 0 ? ((todayValue - startValue - contributions) / startValue) * 100 : 0;
+    const diff = returnPct - benchmarkReturn;
+    const effRate = todayValue > 0 ? (fees / todayValue) * 100 : 0;
+
+    els.outTitle.textContent = clientName.toUpperCase() + "'S PORTFOLIO REVIEW";
+    els.outMeta.textContent = `Prepared for ${clientName} · Advisor view`;
+
+    els.mValue.textContent = fmt(todayValue);
+    els.mValueSub.textContent = `Start of year: ${fmt(startValue)}`;
+
+    els.mReturn.textContent = pct(returnPct);
+    els.mReturn.className = 'value ' + (returnPct >= 0 ? 'pos' : 'neg');
+    els.mReturnSub.textContent = `vs. benchmark ${pct(diff)}`;
+
+    els.mFees.textContent = fmt(fees);
+    els.mFeesSub.textContent = `Effective rate: ${effRate.toFixed(2)}%`;
+
+    const directionWord = diff >= 0 ? 'outperforming' : 'trailing';
+    els.tp1.textContent = `Portfolio is up ${pct(returnPct)} YTD, ${directionWord} the ${benchmarkName} by ${Math.abs(diff).toFixed(1)}%.`;
+    els.tp2.innerHTML = `Total fees YTD are ${effRate.toFixed(2)}% of portfolio value, in line with the agreed fee schedule.<span class="typed-cursor"></span>`;
+
+    renderAllocTable();
+  }
+
+  Object.values(els).forEach(el => {
+    if (el && el.tagName === 'INPUT') {
+      el.addEventListener('input', update);
+    }
+  });
+
+  renderAllocInputs();
+  update();
+
+})();
+</script>
+
+</body>
+</html>
